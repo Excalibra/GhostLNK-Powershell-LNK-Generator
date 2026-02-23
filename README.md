@@ -12,6 +12,7 @@
 
 <img width="1913" height="885" alt="image" src="https://github.com/user-attachments/assets/06306d43-efb4-4da8-9d1b-81e430405c24" />
 
+
 ---
 
 ## 📋 Overview
@@ -24,6 +25,8 @@
 - 🛡️ Red Team Operations & Penetration Testing
 - 📊 Phishing Simulation & User Awareness Training
 - 🔍 Educational Demonstrations of Attack Vectors
+
+<img width="1910" height="884" alt="image" src="https://github.com/user-attachments/assets/cfc43a04-f6a7-4ce5-bcde-6a1fd9284c93" />
 
 ---
 
