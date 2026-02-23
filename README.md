@@ -10,6 +10,8 @@
   <img src="https://img.shields.io/badge/👻-GhostLNK_Stealth_Edition-6a1f7a?style=for-the-badge" alt="GhostLNK Stealth Edition">
 </p>
 
+<img width="1913" height="885" alt="image" src="https://github.com/user-attachments/assets/06306d43-efb4-4da8-9d1b-81e430405c24" />
+
 ---
 
 ## 📋 Overview
