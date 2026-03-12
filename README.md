@@ -1,3 +1,5 @@
+<p align="center">
+  
 # 👻 GhostLNK - Professional LNK Generator with Stealth Mode
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
@@ -6,27 +8,24 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-Excalibra-purple?style=flat&logo=github)](https://github.com/Excalibra/)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/👻-GhostLNK_Stealth_Edition-6a1f7a?style=for-the-badge" alt="GhostLNK Stealth Edition">
+<img src="https://img.shields.io/badge/Version-6.2-6a1f7a?style=for-the-badge" alt="GhostLNK v6.2">
 </p>
 
-<img width="1913" height="885" alt="image" src="https://github.com/user-attachments/assets/06306d43-efb4-4da8-9d1b-81e430405c24" />
+<img width="1917" height="912" alt="image" src="https://github.com/user-attachments/assets/f9683e59-9a71-4e49-a5cd-7fab56cff33b" />
 
 
 ---
 
 ## 📋 Overview
 
-**GhostLNK** is a professional-grade Windows LNK (Shortcut) file generator with advanced stealth capabilities. Designed for security researchers, penetration testers, and red team operations, it enables the creation of sophisticated LNK files that can bypass modern antivirus detection while maintaining realistic appearances.
+**GhostLNK v6.2** is a professional-grade Windows LNK (Shortcut) file generator with advanced stealth capabilities and an intuitive step-by-step workflow. Designed for security researchers, penetration testers, and red team operations, it enables the creation of sophisticated LNK files that can bypass modern antivirus detection while maintaining realistic appearances.
 
 ### 🎯 Use Cases
 
-- 🔬 Security Research & Malware Analysis
-- 🛡️ Red Team Operations & Penetration Testing
-- 📊 Phishing Simulation & User Awareness Training
-- 🔍 Educational Demonstrations of Attack Vectors
-
-<img width="1910" height="884" alt="image" src="https://github.com/user-attachments/assets/cfc43a04-f6a7-4ce5-bcde-6a1fd9284c93" />
+- Security Research & Malware Analysis
+- Red Team Operations & Penetration Testing
+- Phishing Simulation & User Awareness Training
+- Educational Demonstrations of Attack Vectors
 
 ---
 
@@ -50,6 +49,10 @@
 
 ### 🎨 Professional GUI Features
 
+- **Step-by-Step Workflow** - Clear 5-step process with visual progress indicators
+- **Smart Conflict Resolution** - Automatic option disabling with visual feedback
+- **Real-Time Visual Feedback** - Green highlights for active selections, gray for disabled
+- **Tooltip Explanations** - Hover over disabled options to see why
 - **Dark Theme Interface** - Easy on the eyes during long analysis sessions
 - **Real-Time URL Validation** - Automatic Dropbox URL checking with `dl=1` parameter detection
 - **Icon Masquerading** - 8+ realistic icon options (PDF, Word, Excel, etc.)
@@ -113,7 +116,7 @@ python ghostlnk.py
 ./ghostlnk.py
 ```
 
-### Quick Start - 5 Minute Tutorial
+### Quick Start - 5 Step Workflow
 
 #### Step 1: Enter Your URL
 ```
@@ -126,19 +129,32 @@ Example: https://www.dropbox.com/scl/fi/abc123/document.pdf?dl=1
 - **Maximum Stealth** → Choose "Ultra Stealth"
 
 #### Step 3: Configure Stealth Level
-- Start with **Level 1 (Moderate)** for testing
-- Use **Level 2 (Maximum)** for production
+- **Level 0 (Normal)** - Visible output, for testing
+- **Level 1 (Moderate)** - Uses aliases, avoids obvious patterns
+- **Level 2 (Maximum)** - Obfuscated code, AV bypass attempt
 
-#### Step 4: Generate & Encode
-1. Click "Show Command" to preview
-2. Click "Encode to Base64" to generate the -E argument
-3. Copy the encoded argument
+#### Step 4: Execution Options
+- **⏸️ Pause after execution** - Keeps window open (auto-disabled when incompatible)
+- **🐛 Enable Debug Mode** - Verbose output for troubleshooting
+- **🔒 Hide PowerShell Window** - Complete invisibility (auto-disables pause/debug)
 
-#### Step 5: Create LNK File
-1. Select an icon (PDF, Word, Excel, etc.)
-2. Choose output filename
-3. Click "GENERATE LNK FILE"
-4. Save to desired location
+> 💡 **Smart Conflict Resolution**: Options automatically disable with visual feedback when incompatible combinations are selected. Hover over any disabled option to see why.
+
+#### Step 5: Generate (Follow the Numbers)
+```
+⚠️ MUST CLICK IN THIS ORDER: 1 → 2 → 3 → 🚀
+
+1️⃣ Show Command      → Preview your payload
+2️⃣ Encode to Base64  → Generate -E argument
+3️⃣ Copy -E Argument  → Copy to clipboard
+🚀 Use in LNK Generator → Load into LNK builder
+```
+
+**Visual Progress Tracker:**
+```
+Progress: ⚪ Step 1 → ⚪ Step 2 → ⚪ Step 3 → ⚪ Step 4
+          (Turns green as you complete each step)
+```
 
 ### Advanced Features
 
@@ -148,6 +164,14 @@ Example: https://www.dropbox.com/scl/fi/abc123/document.pdf?dl=1
 ❌ https://www.dropbox.com/s/abc123/file.pdf  # Missing dl=1
 ✅ https://www.dropbox.com/s/abc123/file.pdf?dl=1  # Correct format
 ```
+
+#### Smart Option Management
+
+| Selection | Auto-Disabled | Visual Feedback |
+|-----------|---------------|-----------------|
+| Hide PowerShell checked | Pause + Debug | Grayed out with tooltip |
+| Hide PowerShell unchecked | None | Returns to normal |
+| Any option disabled | N/A | Gray text + explanation on hover |
 
 #### Icon Database
 ```python
@@ -350,6 +374,8 @@ We welcome contributions from the security community!
 
 | Version | Date | Key Features |
 |---------|------|--------------|
+| 6.2 | 2026-03-12 | **Smart Conflict Resolution**: Auto-disabling options with tooltips, visual progress indicators, step-by-step workflow, force repaint fixes for UI states |
+| 6.1 | 2026-03-10 | Hidden PowerShell Window option added |
 | 6.0 | 2026-02-20 | Stealth Mode Edition with 3-level AV bypass |
 | 5.0 | 2026-01-15 | Dropbox URL validation, improved GUI |
 | 4.0 | 2025-12-10 | Memory execution mode added |
@@ -377,6 +403,14 @@ We welcome contributions from the security community!
 - Install PyQt6: `pip install PyQt6`
 - Check Python version: `python --version`
 - Verify Windows OS
+
+**Q: Options stay grayed out after deselection**
+- Fixed in v6.2 with force repaint fixes
+- Update to latest version
+
+**Q: Not sure which order to click buttons**
+- Follow the numbered steps (1️⃣ → 2️⃣ → 3️⃣ → 🚀)
+- Watch the progress indicators turn green
 
 ---
 
@@ -421,12 +455,12 @@ of this software and associated documentation files...
 ---
 
 <p align="center">
-  <b>👻 GhostLNK - Professional LNK Generator with Stealth Mode 👻</b><br>
+  <b>👻 GhostLNK v6.2 - Smart Execution Builder 👻</b><br>
   For authorized security testing and educational purposes only
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-6.0_Stealth_Edition-6a1f7a?style=flat-square">
+  <img src="https://img.shields.io/badge/Version-6.2_Smart_Execution_Builder-6a1f7a?style=flat-square">
   <img src="https://img.shields.io/badge/Python-3.8+-blue?style=flat-square">
   <img src="https://img.shields.io/badge/Platform-Windows-lightgrey?style=flat-square">
 </p>
